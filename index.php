@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
             </div>
             
             <ul class="navbar-menu" id="navbarMenu">
-                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#home" class="nav-link active">Beranda</a></li>
                 <li><a href="#about" class="nav-link">About</a></li>
                 <li><a href="#skills" class="nav-link">Skills</a></li>
                 <li><a href="#projects" class="nav-link">Projects</a></li>
