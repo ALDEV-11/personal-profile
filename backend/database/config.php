@@ -46,7 +46,7 @@ if (!file_exists(UPLOAD_DIR . 'resumes/')) {
 // ============================================
 // SITE CONFIGURATION
 // ============================================
-define('SITE_NAME', 'Personal Profile - Admin Panel');
+define('SITE_NAME', 'ALDEV - Admin Panel');
 define('SITE_VERSION', '1.0.0');
 
 // ============================================
@@ -77,7 +77,8 @@ function getDBConnection() {
 }
 
 // Inisialisasi koneksi database global
-$db = getDBConnection();
+$pdo = getDBConnection();
+$db = $pdo; // Alias for backward compatibility
 
 // ============================================
 // SESSION HELPERS
@@ -95,7 +96,7 @@ function isLoggedIn() {
  */
 function requireLogin() {
     if (!isLoggedIn()) {
-        header('Location: ' . BACKEND_URL . 'login.php');
+        header('Location: ' . BACKEND_URL . 'login/login.php');
         exit();
     }
 }
@@ -104,13 +105,13 @@ function requireLogin() {
  * Get current logged in user data
  */
 function getCurrentUser() {
-    global $db;
+    global $pdo;
     
     if (!isLoggedIn()) {
         return null;
     }
     
-    $stmt = $db->prepare("SELECT id, username, email FROM users WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT id, username, email FROM users WHERE id = ?");
     $stmt->execute([$_SESSION['user_id']]);
     return $stmt->fetch();
 }
@@ -119,9 +120,9 @@ function getCurrentUser() {
  * Login user
  */
 function loginUser($username, $password) {
-    global $db;
+    global $pdo;
     
-    $stmt = $db->prepare("SELECT id, username, password, email FROM users WHERE username = ?");
+    $stmt = $pdo->prepare("SELECT id, username, password, email FROM users WHERE username = ?");
     $stmt->execute([$username]);
     $user = $stmt->fetch();
     
@@ -140,7 +141,7 @@ function loginUser($username, $password) {
  */
 function logoutUser() {
     session_destroy();
-    header('Location: ' . BACKEND_URL . 'login.php');
+    header('Location: ' . BACKEND_URL . 'login/login.php');
     exit();
 }
 

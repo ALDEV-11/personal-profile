@@ -112,8 +112,8 @@ function deleteFile($filename, $directory) {
  * Get profile data (hanya 1 row)
  */
 function getProfile() {
-    global $db;
-    $stmt = $db->query("SELECT * FROM profile LIMIT 1");
+    global $pdo;
+    $stmt = $pdo->query("SELECT * FROM profile LIMIT 1");
     return $stmt->fetch();
 }
 
@@ -121,7 +121,7 @@ function getProfile() {
  * Update profile
  */
 function updateProfile($data) {
-    global $db;
+    global $pdo;
     
     try {
         $sql = "UPDATE profile SET 
@@ -155,7 +155,7 @@ function updateProfile($data) {
         
         $sql .= " WHERE id = 1";
         
-        $stmt = $db->prepare($sql);
+        $stmt = $pdo->prepare($sql);
         return $stmt->execute($params);
     } catch (PDOException $e) {
         return false;
@@ -170,13 +170,13 @@ function updateProfile($data) {
  * Get all skills
  */
 function getAllSkills($category = null) {
-    global $db;
+    global $pdo;
     
     if ($category) {
-        $stmt = $db->prepare("SELECT * FROM skills WHERE category = ? ORDER BY display_order ASC, id DESC");
+        $stmt = $pdo->prepare("SELECT * FROM skills WHERE category = ? ORDER BY display_order ASC, id DESC");
         $stmt->execute([$category]);
     } else {
-        $stmt = $db->query("SELECT * FROM skills ORDER BY display_order ASC, id DESC");
+        $stmt = $pdo->query("SELECT * FROM skills ORDER BY display_order ASC, id DESC");
     }
     
     return $stmt->fetchAll();
@@ -186,8 +186,8 @@ function getAllSkills($category = null) {
  * Get skill by ID
  */
 function getSkillById($id) {
-    $db = getDBConnection();
-    $stmt = $db->prepare("SELECT * FROM skills WHERE id = ?");
+    global $pdo;
+    $stmt = $pdo->prepare("SELECT * FROM skills WHERE id = ?");
     $stmt->execute([$id]);
     return $stmt->fetch();
 }
@@ -196,13 +196,13 @@ function getSkillById($id) {
  * Create skill
  */
 function createSkill($data) {
-    global $db;
+    global $pdo;
     
     try {
         $sql = "INSERT INTO skills (skill_name, skill_level, category, icon, display_order) 
                 VALUES (?, ?, ?, ?, ?)";
         
-        $stmt = $db->prepare($sql);
+        $stmt = $pdo->prepare($sql);
         return $stmt->execute([
             $data['skill_name'],
             $data['skill_level'],
@@ -219,7 +219,7 @@ function createSkill($data) {
  * Update skill
  */
 function updateSkill($id, $data) {
-    global $db;
+    global $pdo;
     
     try {
         $sql = "UPDATE skills SET 
@@ -230,7 +230,7 @@ function updateSkill($id, $data) {
                 display_order = ?
                 WHERE id = ?";
         
-        $stmt = $db->prepare($sql);
+        $stmt = $pdo->prepare($sql);
         return $stmt->execute([
             $data['skill_name'],
             $data['skill_level'],
@@ -248,10 +248,10 @@ function updateSkill($id, $data) {
  * Delete skill
  */
 function deleteSkill($id) {
-    $db = getDBConnection();
+    global $pdo;
     
     try {
-        $stmt = $db->prepare("DELETE FROM skills WHERE id = ?");
+        $stmt = $pdo->prepare("DELETE FROM skills WHERE id = ?");
         return $stmt->execute([$id]);
     } catch (PDOException $e) {
         error_log("Delete skill error: " . $e->getMessage());
@@ -263,8 +263,8 @@ function deleteSkill($id) {
  * Get skill categories
  */
 function getSkillCategories() {
-    global $db;
-    $stmt = $db->query("SELECT DISTINCT category FROM skills ORDER BY category");
+    global $pdo;
+    $stmt = $pdo->query("SELECT DISTINCT category FROM skills ORDER BY category");
     return $stmt->fetchAll(PDO::FETCH_COLUMN);
 }
 
@@ -276,13 +276,13 @@ function getSkillCategories() {
  * Get all projects
  */
 function getAllProjects($featured = null) {
-    global $db;
+    global $pdo;
     
     if ($featured !== null) {
-        $stmt = $db->prepare("SELECT * FROM projects WHERE is_featured = ? ORDER BY display_order ASC, id DESC");
+        $stmt = $pdo->prepare("SELECT * FROM projects WHERE is_featured = ? ORDER BY display_order ASC, id DESC");
         $stmt->execute([$featured ? 1 : 0]);
     } else {
-        $stmt = $db->query("SELECT * FROM projects ORDER BY display_order ASC, id DESC");
+        $stmt = $pdo->query("SELECT * FROM projects ORDER BY display_order ASC, id DESC");
     }
     
     return $stmt->fetchAll();
@@ -292,8 +292,8 @@ function getAllProjects($featured = null) {
  * Get project by ID
  */
 function getProjectById($id) {
-    global $db;
-    $stmt = $db->prepare("SELECT * FROM projects WHERE id = ?");
+    global $pdo;
+    $stmt = $pdo->prepare("SELECT * FROM projects WHERE id = ?");
     $stmt->execute([$id]);
     return $stmt->fetch();
 }
@@ -302,14 +302,14 @@ function getProjectById($id) {
  * Create project
  */
 function createProject($data) {
-    global $db;
+    global $pdo;
     
     try {
         $sql = "INSERT INTO projects (project_title, description, image, project_url, github_url, 
                 technologies, start_date, end_date, is_featured, display_order) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
-        $stmt = $db->prepare($sql);
+        $stmt = $pdo->prepare($sql);
         return $stmt->execute([
             $data['project_title'],
             $data['description'],
@@ -331,7 +331,7 @@ function createProject($data) {
  * Update project
  */
 function updateProject($id, $data) {
-    global $db;
+    global $pdo;
     
     try {
         $sql = "UPDATE projects SET 
@@ -366,7 +366,7 @@ function updateProject($id, $data) {
         $sql .= " WHERE id = ?";
         $params[] = $id;
         
-        $stmt = $db->prepare($sql);
+        $stmt = $pdo->prepare($sql);
         return $stmt->execute($params);
     } catch (PDOException $e) {
         return false;
@@ -377,14 +377,14 @@ function updateProject($id, $data) {
  * Delete project
  */
 function deleteProject($id) {
-    global $db;
+    global $pdo;
     
     try {
         // Get image filename untuk dihapus
         $project = getProjectById($id);
         
         // Delete dari database
-        $stmt = $db->prepare("DELETE FROM projects WHERE id = ?");
+        $stmt = $pdo->prepare("DELETE FROM projects WHERE id = ?");
         $result = $stmt->execute([$id]);
         
         // Delete image file jika ada
@@ -406,8 +406,8 @@ function deleteProject($id) {
  * Get all education
  */
 function getAllEducation() {
-    global $db;
-    $stmt = $db->query("SELECT * FROM education ORDER BY display_order ASC, start_date DESC");
+    global $pdo;
+    $stmt = $pdo->query("SELECT * FROM education ORDER BY display_order ASC, start_date DESC");
     return $stmt->fetchAll();
 }
 
@@ -415,8 +415,8 @@ function getAllEducation() {
  * Get education by ID
  */
 function getEducationById($id) {
-    global $db;
-    $stmt = $db->prepare("SELECT * FROM education WHERE id = ?");
+    global $pdo;
+    $stmt = $pdo->prepare("SELECT * FROM education WHERE id = ?");
     $stmt->execute([$id]);
     return $stmt->fetch();
 }
@@ -425,14 +425,14 @@ function getEducationById($id) {
  * Create education
  */
 function createEducation($data) {
-    global $db;
+    global $pdo;
     
     try {
         $sql = "INSERT INTO education (institution, degree, field_of_study, start_date, 
                 end_date, description, display_order) 
                 VALUES (?, ?, ?, ?, ?, ?, ?)";
         
-        $stmt = $db->prepare($sql);
+        $stmt = $pdo->prepare($sql);
         return $stmt->execute([
             $data['institution'],
             $data['degree'],
@@ -451,7 +451,7 @@ function createEducation($data) {
  * Update education
  */
 function updateEducation($id, $data) {
-    global $db;
+    global $pdo;
     
     try {
         $sql = "UPDATE education SET 
@@ -464,7 +464,7 @@ function updateEducation($id, $data) {
                 display_order = ?
                 WHERE id = ?";
         
-        $stmt = $db->prepare($sql);
+        $stmt = $pdo->prepare($sql);
         return $stmt->execute([
             $data['institution'],
             $data['degree'],
@@ -484,10 +484,10 @@ function updateEducation($id, $data) {
  * Delete education
  */
 function deleteEducation($id) {
-    global $db;
+    global $pdo;
     
     try {
-        $stmt = $db->prepare("DELETE FROM education WHERE id = ?");
+        $stmt = $pdo->prepare("DELETE FROM education WHERE id = ?");
         return $stmt->execute([$id]);
     } catch (PDOException $e) {
         return false;
@@ -502,8 +502,8 @@ function deleteEducation($id) {
  * Get all experience
  */
 function getAllExperience() {
-    global $db;
-    $stmt = $db->query("SELECT * FROM experience ORDER BY display_order ASC, start_date DESC");
+    global $pdo;
+    $stmt = $pdo->query("SELECT * FROM experience ORDER BY display_order ASC, start_date DESC");
     return $stmt->fetchAll();
 }
 
@@ -511,8 +511,8 @@ function getAllExperience() {
  * Get experience by ID
  */
 function getExperienceById($id) {
-    global $db;
-    $stmt = $db->prepare("SELECT * FROM experience WHERE id = ?");
+    global $pdo;
+    $stmt = $pdo->prepare("SELECT * FROM experience WHERE id = ?");
     $stmt->execute([$id]);
     return $stmt->fetch();
 }
@@ -521,14 +521,14 @@ function getExperienceById($id) {
  * Create experience
  */
 function createExperience($data) {
-    global $db;
+    global $pdo;
     
     try {
         $sql = "INSERT INTO experience (company, position, start_date, end_date, 
                 is_current, description, display_order) 
                 VALUES (?, ?, ?, ?, ?, ?, ?)";
         
-        $stmt = $db->prepare($sql);
+        $stmt = $pdo->prepare($sql);
         return $stmt->execute([
             $data['company'],
             $data['position'],
@@ -547,7 +547,7 @@ function createExperience($data) {
  * Update experience
  */
 function updateExperience($id, $data) {
-    global $db;
+    global $pdo;
     
     try {
         $sql = "UPDATE experience SET 
@@ -560,7 +560,7 @@ function updateExperience($id, $data) {
                 display_order = ?
                 WHERE id = ?";
         
-        $stmt = $db->prepare($sql);
+        $stmt = $pdo->prepare($sql);
         return $stmt->execute([
             $data['company'],
             $data['position'],
@@ -580,10 +580,10 @@ function updateExperience($id, $data) {
  * Delete experience
  */
 function deleteExperience($id) {
-    global $db;
+    global $pdo;
     
     try {
-        $stmt = $db->prepare("DELETE FROM experience WHERE id = ?");
+        $stmt = $pdo->prepare("DELETE FROM experience WHERE id = ?");
         return $stmt->execute([$id]);
     } catch (PDOException $e) {
         return false;
@@ -598,8 +598,8 @@ function deleteExperience($id) {
  * Get all social media
  */
 function getAllSocialMedia() {
-    global $db;
-    $stmt = $db->query("SELECT * FROM social_media ORDER BY display_order ASC, id DESC");
+    global $pdo;
+    $stmt = $pdo->query("SELECT * FROM social_media ORDER BY display_order ASC, id DESC");
     return $stmt->fetchAll();
 }
 
@@ -607,8 +607,8 @@ function getAllSocialMedia() {
  * Get social media by ID
  */
 function getSocialMediaById($id) {
-    global $db;
-    $stmt = $db->prepare("SELECT * FROM social_media WHERE id = ?");
+    global $pdo;
+    $stmt = $pdo->prepare("SELECT * FROM social_media WHERE id = ?");
     $stmt->execute([$id]);
     return $stmt->fetch();
 }
@@ -617,13 +617,13 @@ function getSocialMediaById($id) {
  * Create social media
  */
 function createSocialMedia($data) {
-    global $db;
+    global $pdo;
     
     try {
         $sql = "INSERT INTO social_media (platform, url, icon, display_order) 
                 VALUES (?, ?, ?, ?)";
         
-        $stmt = $db->prepare($sql);
+        $stmt = $pdo->prepare($sql);
         return $stmt->execute([
             $data['platform'],
             $data['url'],
@@ -639,7 +639,7 @@ function createSocialMedia($data) {
  * Update social media
  */
 function updateSocialMedia($id, $data) {
-    global $db;
+    global $pdo;
     
     try {
         $sql = "UPDATE social_media SET 
@@ -649,7 +649,7 @@ function updateSocialMedia($id, $data) {
                 display_order = ?
                 WHERE id = ?";
         
-        $stmt = $db->prepare($sql);
+        $stmt = $pdo->prepare($sql);
         return $stmt->execute([
             $data['platform'],
             $data['url'],
@@ -666,10 +666,10 @@ function updateSocialMedia($id, $data) {
  * Delete social media
  */
 function deleteSocialMedia($id) {
-    global $db;
+    global $pdo;
     
     try {
-        $stmt = $db->prepare("DELETE FROM social_media WHERE id = ?");
+        $stmt = $pdo->prepare("DELETE FROM social_media WHERE id = ?");
         return $stmt->execute([$id]);
     } catch (PDOException $e) {
         return false;
@@ -684,12 +684,12 @@ function deleteSocialMedia($id) {
  * Get all contact messages
  */
 function getAllMessages($unreadOnly = false) {
-    $db = getDBConnection();
+    global $pdo;
     
     if ($unreadOnly) {
-        $stmt = $db->query("SELECT * FROM contact_messages WHERE is_read = 0 ORDER BY created_at DESC");
+        $stmt = $pdo->query("SELECT * FROM contact_messages WHERE is_read = 0 ORDER BY created_at DESC");
     } else {
-        $stmt = $db->query("SELECT * FROM contact_messages ORDER BY created_at DESC");
+        $stmt = $pdo->query("SELECT * FROM contact_messages ORDER BY created_at DESC");
     }
     
     return $stmt->fetchAll();
@@ -699,8 +699,8 @@ function getAllMessages($unreadOnly = false) {
  * Get message by ID
  */
 function getMessageById($id) {
-    $db = getDBConnection();
-    $stmt = $db->prepare("SELECT * FROM contact_messages WHERE id = ?");
+    global $pdo;
+    $stmt = $pdo->prepare("SELECT * FROM contact_messages WHERE id = ?");
     $stmt->execute([$id]);
     return $stmt->fetch();
 }
@@ -709,13 +709,13 @@ function getMessageById($id) {
  * Create contact message (dari frontend)
  */
 function createContactMessage($data) {
-    global $db;
+    global $pdo;
     
     try {
         $sql = "INSERT INTO contact_messages (name, email, subject, message) 
                 VALUES (?, ?, ?, ?)";
         
-        $stmt = $db->prepare($sql);
+        $stmt = $pdo->prepare($sql);
         return $stmt->execute([
             $data['name'],
             $data['email'],
@@ -731,10 +731,10 @@ function createContactMessage($data) {
  * Mark message as read
  */
 function markMessageAsRead($id) {
-    $db = getDBConnection();
+    global $pdo;
     
     try {
-        $stmt = $db->prepare("UPDATE contact_messages SET is_read = 1 WHERE id = ?");
+        $stmt = $pdo->prepare("UPDATE contact_messages SET is_read = 1 WHERE id = ?");
         return $stmt->execute([$id]);
     } catch (PDOException $e) {
         error_log("Mark as read error: " . $e->getMessage());
@@ -746,10 +746,10 @@ function markMessageAsRead($id) {
  * Delete message
  */
 function deleteMessage($id) {
-    $db = getDBConnection();
+    global $pdo;
     
     try {
-        $stmt = $db->prepare("DELETE FROM contact_messages WHERE id = ?");
+        $stmt = $pdo->prepare("DELETE FROM contact_messages WHERE id = ?");
         return $stmt->execute([$id]);
     } catch (PDOException $e) {
         error_log("Delete message error: " . $e->getMessage());
@@ -761,8 +761,8 @@ function deleteMessage($id) {
  * Get unread messages count
  */
 function getUnreadMessagesCount() {
-    $db = getDBConnection();
-    $stmt = $db->query("SELECT COUNT(*) FROM contact_messages WHERE is_read = 0");
+    global $pdo;
+    $stmt = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE is_read = 0");
     return $stmt->fetchColumn();
 }
 
@@ -774,40 +774,40 @@ function getUnreadMessagesCount() {
  * Get dashboard statistics
  */
 function getDashboardStats() {
-    global $db;
+    global $pdo;
     
     $stats = [];
     
     // Total skills
-    $stmt = $db->query("SELECT COUNT(*) FROM skills");
+    $stmt = $pdo->query("SELECT COUNT(*) FROM skills");
     $stats['total_skills'] = $stmt->fetchColumn();
     
     // Total projects
-    $stmt = $db->query("SELECT COUNT(*) FROM projects");
+    $stmt = $pdo->query("SELECT COUNT(*) FROM projects");
     $stats['total_projects'] = $stmt->fetchColumn();
     
     // Featured projects
-    $stmt = $db->query("SELECT COUNT(*) FROM projects WHERE is_featured = 1");
+    $stmt = $pdo->query("SELECT COUNT(*) FROM projects WHERE is_featured = 1");
     $stats['featured_projects'] = $stmt->fetchColumn();
     
     // Total education
-    $stmt = $db->query("SELECT COUNT(*) FROM education");
+    $stmt = $pdo->query("SELECT COUNT(*) FROM education");
     $stats['total_education'] = $stmt->fetchColumn();
     
     // Total experience
-    $stmt = $db->query("SELECT COUNT(*) FROM experience");
+    $stmt = $pdo->query("SELECT COUNT(*) FROM experience");
     $stats['total_experience'] = $stmt->fetchColumn();
     
     // Total social media
-    $stmt = $db->query("SELECT COUNT(*) FROM social_media");
+    $stmt = $pdo->query("SELECT COUNT(*) FROM social_media");
     $stats['total_social'] = $stmt->fetchColumn();
     
     // Total messages
-    $stmt = $db->query("SELECT COUNT(*) FROM contact_messages");
+    $stmt = $pdo->query("SELECT COUNT(*) FROM contact_messages");
     $stats['total_messages'] = $stmt->fetchColumn();
     
     // Unread messages
-    $stmt = $db->query("SELECT COUNT(*) FROM contact_messages WHERE is_read = 0");
+    $stmt = $pdo->query("SELECT COUNT(*) FROM contact_messages WHERE is_read = 0");
     $stats['unread_messages'] = $stmt->fetchColumn();
     
     return $stats;
@@ -817,8 +817,8 @@ function getDashboardStats() {
  * Get recent messages untuk dashboard
  */
 function getRecentMessages($limit = 5) {
-    global $db;
-    $stmt = $db->prepare("SELECT * FROM contact_messages ORDER BY created_at DESC LIMIT ?");
+    global $pdo;
+    $stmt = $pdo->prepare("SELECT * FROM contact_messages ORDER BY created_at DESC LIMIT ?");
     $stmt->execute([$limit]);
     return $stmt->fetchAll();
 }

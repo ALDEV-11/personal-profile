@@ -4,12 +4,12 @@
  * Halaman login untuk admin panel
  */
 
-require_once 'config.php';
-require_once 'functions.php';
+require_once '../database/config.php';
+require_once '../database/functions.php';
 
 // Jika sudah login, redirect ke dashboard
 if (isLoggedIn()) {
-    redirect(BACKEND_URL . 'dashboard.php');
+    redirect(BACKEND_URL . 'index.php');
 }
 
 $error = '';
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         // Coba login
         if (loginUser($username, $password)) {
-            redirect(BACKEND_URL . 'dashboard.php');
+            redirect(BACKEND_URL . 'index.php');
         } else {
             $error = 'Username atau password salah!';
         }
@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         body {
             font-family: 'Inter', sans-serif;
-            background: url('../uploads/login-bg.jpg') no-repeat center center fixed;
+            background: url('<?php echo BASE_URL; ?>uploads/login-bg.jpg') no-repeat center center fixed;
             background-size: cover;
             min-height: 100vh;
             display: flex;
@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.5);
             z-index: 1;
         }
         
@@ -91,10 +91,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         .login-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             overflow: hidden;
@@ -113,9 +113,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         .login-header {
-            background: rgba(79, 70, 229, 0.3);
-            backdrop-filter: blur(5px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(79, 70, 229, 0.4);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.25);
             color: white;
             padding: 40px 30px;
             text-align: center;
@@ -124,18 +124,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .login-header i {
             font-size: 3rem;
             margin-bottom: 15px;
-            opacity: 0.9;
+            opacity: 1;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
         }
         
         .login-header h1 {
             font-size: 1.75rem;
             font-weight: 700;
             margin-bottom: 8px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
         
         .login-header p {
-            opacity: 0.9;
+            opacity: 0.95;
             font-size: 0.95rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         
         .login-body {
@@ -146,34 +149,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-weight: 600;
             color: white;
             margin-bottom: 8px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+            font-size: 0.95rem;
         }
         
         .form-control {
             border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
             color: white;
             padding: 12px 16px;
             font-size: 0.95rem;
             transition: all 0.3s;
+            font-weight: 500;
         }
         
         .form-control::placeholder {
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.7);
         }
         
         .form-control:focus {
-            border-color: rgba(255, 255, 255, 0.5);
-            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
-            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.25);
+            color: white;
         }
         
         .input-group-text {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
             border-right: none;
             border-radius: 10px 0 0 10px;
             padding: 12px 16px;
@@ -186,14 +192,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         .input-group:focus-within .input-group-text {
-            border-color: rgba(255, 255, 255, 0.5);
-            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.25);
         }
         
         .btn-login {
-            background: rgba(79, 70, 229, 0.8);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.9) 0%, rgba(67, 56, 202, 0.9) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
             border-radius: 10px;
             padding: 14px;
             font-weight: 600;
@@ -201,12 +207,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: white;
             width: 100%;
             transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         
         .btn-login:hover {
             transform: translateY(-2px);
-            background: rgba(79, 70, 229, 1);
-            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
+            background: linear-gradient(135deg, rgba(79, 70, 229, 1) 0%, rgba(67, 56, 202, 1) 100%);
+            box-shadow: 0 10px 30px rgba(79, 70, 229, 0.5);
+            border-color: rgba(255, 255, 255, 0.5);
         }
         
         .btn-login:active {
@@ -215,11 +224,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         .alert {
             border-radius: 10px;
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            background: rgba(239, 68, 68, 0.2);
-            backdrop-filter: blur(5px);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            background: rgba(239, 68, 68, 0.3);
+            backdrop-filter: blur(10px);
             color: white;
             padding: 12px 16px;
+            font-weight: 500;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
         }
         
         .password-toggle {

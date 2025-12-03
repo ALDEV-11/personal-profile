@@ -3,8 +3,8 @@
  * Mark Message as Read Handler (AJAX)
  */
 
-require_once 'config.php';
-require_once 'functions.php';
+require_once '../database/config.php';
+require_once '../database/functions.php';
 
 // Set header untuk JSON response
 header('Content-Type: application/json');

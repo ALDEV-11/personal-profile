@@ -16,7 +16,10 @@ $pageTitle = ucfirst(str_replace('-', ' ', $currentPage));
     <title><?php echo $pageTitle; ?> - <?php echo SITE_NAME; ?></title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="<?php echo BASE_URL; ?>assets/favicon.ico">
+    <link rel="shortcut icon" type="image/png" href="<?php echo BASE_URL; ?>uploads/favicon.png?v=2">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?php echo BASE_URL; ?>uploads/favicon.png?v=2">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?php echo BASE_URL; ?>uploads/favicon.png?v=2">
+    <link rel="apple-touch-icon" sizes="180x180" href="<?php echo BASE_URL; ?>uploads/Aldev.png?v=2">
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -28,6 +31,12 @@ $pageTitle = ucfirst(str_replace('-', ' ', $currentPage));
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     
     <!-- Custom Admin CSS -->
     <style>
@@ -86,6 +95,179 @@ $pageTitle = ucfirst(str_replace('-', ' ', $currentPage));
             align-items: center;
             justify-content: center;
             font-weight: 600;
+        }
+        
+        /* Notification Badge */
+        .navbar .nav-item {
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            position: relative;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -2px;
+            right: 2px;
+            background: var(--danger-color);
+            color: white;
+            font-size: 0.6rem;
+            font-weight: 700;
+            padding: 2px 4px;
+            border-radius: 8px;
+            min-width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+            border: 2px solid white;
+        }
+        
+        .nav-link i.fa-bell {
+            color: #6B7280;
+            transition: all 0.3s;
+            font-size: 1.25rem;
+        }
+        
+        .nav-link:hover i.fa-bell {
+            color: var(--primary-color);
+            transform: rotate(15deg);
+        }
+        
+        /* Responsive Bell Icon */
+        @media (max-width: 1366px) {
+            .nav-link i.fa-bell {
+                font-size: 1.125rem;
+            }
+            
+            .notification-badge {
+                font-size: 0.55rem;
+                min-width: 15px;
+                height: 15px;
+                padding: 1.5px 3.5px;
+            }
+        }
+        
+        @media (max-width: 991px) {
+            .nav-link i.fa-bell {
+                font-size: 1rem;
+            }
+            
+            .notification-badge {
+                font-size: 0.5rem;
+                min-width: 14px;
+                height: 14px;
+                padding: 1.5px 3px;
+                top: -1px;
+                right: 3px;
+            }
+        }
+        
+        @media (max-width: 767px) {
+            .nav-link i.fa-bell {
+                font-size: 1.375rem;
+            }
+            
+            .notification-badge {
+                font-size: 0.6rem;
+                min-width: 16px;
+                height: 16px;
+                padding: 2px 4px;
+                top: -2px;
+                right: 2px;
+            }
+        }
+        
+        @media (max-width: 575px) {
+            .nav-link i.fa-bell {
+                font-size: 1.25rem;
+            }
+            
+            .notification-badge {
+                font-size: 0.55rem;
+                min-width: 15px;
+                height: 15px;
+                padding: 1.5px 3.5px;
+            }
+        }
+        
+        @media (max-width: 374px) {
+            .nav-link i.fa-bell {
+                font-size: 1.125rem;
+            }
+            
+            .notification-badge {
+                font-size: 0.5rem;
+                min-width: 14px;
+                height: 14px;
+                padding: 1.5px 3px;
+                top: -1px;
+                right: 1px;
+            }
+        }
+        
+        /* Responsive Add New Button */
+        @media (max-width: 1366px) {
+            .btn {
+                font-size: 0.9rem;
+                padding: 9px 18px;
+                border-radius: 7px;
+            }
+        }
+        
+        @media (max-width: 991px) {
+            .btn {
+                font-size: 0.85rem;
+                padding: 8px 16px;
+                border-radius: 6px;
+            }
+            
+            .btn i {
+                font-size: 0.85rem;
+            }
+        }
+        
+        @media (max-width: 767px) {
+            .btn {
+                font-size: 0.8rem;
+                padding: 7px 14px;
+                border-radius: 6px;
+            }
+            
+            .btn i {
+                font-size: 0.8rem;
+            }
+        }
+        
+        @media (max-width: 575px) {
+            .btn {
+                font-size: 0.75rem;
+                padding: 6px 12px;
+                border-radius: 5px;
+            }
+            
+            .btn i {
+                font-size: 0.75rem;
+            }
+        }
+        
+        @media (max-width: 374px) {
+            .btn {
+                font-size: 0.7rem;
+                padding: 5px 10px;
+                border-radius: 4px;
+            }
+            
+            .btn i {
+                font-size: 0.7rem;
+            }
         }
         
         /* Sidebar */
@@ -353,7 +535,7 @@ $pageTitle = ucfirst(str_replace('-', ' ', $currentPage));
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
-            <a class="navbar-brand" href="dashboard.php">
+            <a class="navbar-brand" href="<?php echo BACKEND_URL; ?>index.php">
                 <i class="fas fa-rocket"></i> Admin Dashboard
             </a>
             
@@ -363,11 +545,20 @@ $pageTitle = ucfirst(str_replace('-', ' ', $currentPage));
             
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
+                    <!-- Message Notification Bell -->
                     <li class="nav-item">
-                        <a class="nav-link" href="<?php echo FRONTEND_URL; ?>" target="_blank">
-                            <i class="fas fa-globe"></i> View Website
+                        <a class="nav-link position-relative" href="<?php echo BACKEND_URL; ?>messages/">
+                            <i class="fas fa-bell fa-lg"></i>
+                            <?php 
+                            $unreadCount = getUnreadMessagesCount();
+                            if ($unreadCount > 0): 
+                            ?>
+                                <span class="notification-badge"><?php echo $unreadCount > 99 ? '99+' : $unreadCount; ?></span>
+                            <?php endif; ?>
                         </a>
                     </li>
+                    
+                    <!-- User Dropdown -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
                             <div class="user-avatar">
@@ -376,9 +567,9 @@ $pageTitle = ucfirst(str_replace('-', ' ', $currentPage));
                             <span><?php echo $_SESSION['username'] ?? 'Admin'; ?></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="profile.php"><i class="fas fa-user me-2"></i> Edit Profile</a></li>
+                            <li><a class="dropdown-item" href="<?php echo BACKEND_URL; ?>profile/"><i class="fas fa-user me-2"></i> Edit Profile</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="logout.php"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                            <li><a class="dropdown-item text-danger" href="<?php echo BACKEND_URL; ?>login/logout.php"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
                         </ul>
                     </li>
                 </ul>

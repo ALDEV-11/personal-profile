@@ -4,8 +4,8 @@
  * Update profile data (hanya ada 1 row)
  */
 
-require_once 'config.php';
-require_once 'functions.php';
+require_once '../database/config.php';
+require_once '../database/functions.php';
 
 // Proteksi halaman
 requireLogin();
@@ -68,8 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Update jika tidak ada error
     if (empty($errors)) {
         if (updateProfile($data)) {
-            setFlashMessage('success', 'Profile berhasil diupdate!');
-            redirect(BACKEND_URL . 'profile.php');
+            redirect(BACKEND_URL . 'profile/?success=1');
         } else {
             setFlashMessage('error', 'Gagal mengupdate profile');
         }
@@ -79,8 +78,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $pageTitle = 'Edit Profile';
-include 'partials/header.php';
-include 'partials/sidebar.php';
+include '../partials/header.php';
+include '../partials/sidebar.php';
 ?>
 
 <div class="main-content">
@@ -161,7 +160,7 @@ include 'partials/sidebar.php';
                         </div>
                         
                         <div class="d-flex justify-content-between align-items-center mt-4">
-                            <a href="dashboard.php" class="btn btn-outline-secondary">
+                            <a href="<?php echo BACKEND_URL; ?>index.php" class="btn btn-outline-secondary">
                                 <i class="fas fa-arrow-left me-1"></i> Back
                             </a>
                             <button type="submit" class="btn btn-primary">
@@ -192,4 +191,20 @@ include 'partials/sidebar.php';
     </div>
 </div>
 
-<?php include 'partials/footer.php'; ?>
+<script>
+// Show success alert if redirected with success parameter
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('success') === '1') {
+    Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: 'Edit Successfully',
+        showConfirmButton: false,
+        timer: 1500
+    });
+    // Remove query parameter from URL
+    window.history.replaceState({}, document.title, window.location.pathname);
+}
+</script>
+
+<?php include '../partials/footer.php'; ?>

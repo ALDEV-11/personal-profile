@@ -3,8 +3,8 @@
  * Skill Form - Add/Edit
  */
 
-require_once 'config.php';
-require_once 'functions.php';
+require_once '../database/config.php';
+require_once '../database/functions.php';
 
 requireLogin();
 
@@ -18,7 +18,7 @@ if (isset($_GET['id'])) {
     
     if (!$skill) {
         setFlashMessage('error', 'Skill tidak ditemukan');
-        redirect(BACKEND_URL . 'skills.php');
+        redirect(BACKEND_URL . 'skills/');
     }
 }
 
@@ -39,14 +39,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($isEdit) {
             if (updateSkill($_GET['id'], $data)) {
                 setFlashMessage('success', 'Skill berhasil diupdate!');
-                redirect(BACKEND_URL . 'skills.php');
+                redirect(BACKEND_URL . 'skills/');
             } else {
                 setFlashMessage('error', 'Gagal mengupdate skill');
             }
         } else {
             if (createSkill($data)) {
                 setFlashMessage('success', 'Skill berhasil ditambahkan!');
-                redirect(BACKEND_URL . 'skills.php');
+                redirect(BACKEND_URL . 'skills/');
             } else {
                 setFlashMessage('error', 'Gagal menambahkan skill');
             }
@@ -103,7 +103,7 @@ include 'partials/sidebar.php';
                         </div>
                         
                         <div class="d-flex justify-content-between align-items-center mt-4">
-                            <a href="skills.php" class="btn btn-outline-secondary">
+                            <a href="./" class="btn btn-outline-secondary">
                                 <i class="fas fa-arrow-left me-1"></i> Back
                             </a>
                             <button type="submit" class="btn btn-primary">

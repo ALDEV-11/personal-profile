@@ -5,8 +5,8 @@
  */
 
 // Include backend config untuk ambil data dari database
-require_once __DIR__ . '/backend/config.php';
-require_once __DIR__ . '/backend/functions.php';
+require_once __DIR__ . '/backend/database/config.php';
+require_once __DIR__ . '/backend/database/functions.php';
 
 // Get all data from database
 $profile = getProfile();
@@ -61,6 +61,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
     <meta property="og:title" content="<?php echo htmlspecialchars($profile['full_name'] ?? ''); ?>">
     <meta property="og:description" content="<?php echo htmlspecialchars(substr($profile['about_me'] ?? '', 0, 160)); ?>">
     
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/png" href="uploads/favicon.png?v=2">
+    <link rel="icon" type="image/png" sizes="32x32" href="uploads/favicon.png?v=2">
+    <link rel="icon" type="image/png" sizes="16x16" href="uploads/favicon.png?v=2">
+    <link rel="apple-touch-icon" sizes="180x180" href="uploads/Aldev.png?v=2">
+    
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
@@ -86,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
             </div>
             
             <ul class="navbar-menu" id="navbarMenu">
-                <li><a href="#home" class="nav-link active">Beranda</a></li>
+                <li><a href="#home" class="nav-link active">Home</a></li>
                 <li><a href="#about" class="nav-link">About</a></li>
                 <li><a href="#skills" class="nav-link">Skills</a></li>
                 <li><a href="#projects" class="nav-link">Projects</a></li>
@@ -439,7 +445,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
                         </div>
                         
                         <button type="submit" name="contact_submit" class="btn btn-primary btn-block">
-                            <i class="fas fa-paper-plane me-2"> </i>  Send Message
+                            <i class="fas fa-paper-plane"></i> Send Message
                         </button>
                     </form>
                 </div>
@@ -447,7 +453,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
         </div>
     </section>
     
-  
+    <?php include __DIR__ . '/frontend/partials/footer.php'; ?>
     
     <!-- Back to Top Button -->
     <button class="back-to-top" id="backToTop">

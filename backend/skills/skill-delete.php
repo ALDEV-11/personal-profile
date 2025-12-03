@@ -3,8 +3,8 @@
  * Delete Skill Handler
  */
 
-require_once 'config.php';
-require_once 'functions.php';
+require_once '../database/config.php';
+require_once '../database/functions.php';
 
 requireLogin();
 
@@ -22,7 +22,7 @@ if (isset($_POST['id'])) {
 
 if ($id <= 0) {
     setFlashMessage('error', 'ID tidak valid atau tidak ditemukan');
-    header('Location: skills.php');
+    header('Location: ./');
     exit;
 }
 
@@ -33,7 +33,7 @@ $skill = getSkillById($id);
 if (!$skill) {
     error_log("DELETE SKILL: Skill not found for ID: " . $id);
     setFlashMessage('error', 'Skill tidak ditemukan');
-    header('Location: skills.php');
+    header('Location: ./');
     exit;
 }
 
@@ -48,5 +48,5 @@ if (deleteSkill($id)) {
     setFlashMessage('error', 'Gagal menghapus skill');
 }
 
-header('Location: skills.php');
+header('Location: ./');
 exit;

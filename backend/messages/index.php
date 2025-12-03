@@ -4,8 +4,8 @@
  * View all contact messages
  */
 
-require_once 'config.php';
-require_once 'functions.php';
+require_once '../database/config.php';
+require_once '../database/functions.php';
 
 requireLogin();
 
@@ -13,8 +13,8 @@ requireLogin();
 $messages = getAllMessages();
 
 $pageTitle = 'Contact Messages';
-include 'partials/header.php';
-include 'partials/sidebar.php';
+include '../partials/header.php';
+include '../partials/sidebar.php';
 ?>
 
 <div class="main-content">
@@ -220,4 +220,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<?php include 'partials/footer.php'; ?>
+<?php include '../partials/footer.php'; ?>

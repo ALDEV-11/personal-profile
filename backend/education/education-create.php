@@ -1,0 +1,89 @@
+<?php
+/**
+ * Education Create API
+ * Endpoint untuk menambah education baru via AJAX
+ */
+
+require_once '../database/config.php';
+require_once '../database/functions.php';
+
+// Proteksi halaman - harus login
+requireLogin();
+
+// Set header JSON
+header('Content-Type: application/json');
+
+// Hanya terima POST request
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+    exit;
+}
+
+try {
+    // Validasi input
+    $institution = trim($_POST['institution'] ?? '');
+    $degree = trim($_POST['degree'] ?? '');
+    $field_of_study = trim($_POST['field_of_study'] ?? '');
+    $start_date = trim($_POST['start_date'] ?? '');
+    $end_date = trim($_POST['end_date'] ?? '');
+    $description = trim($_POST['description'] ?? '');
+    $display_order = isset($_POST['display_order']) ? intval($_POST['display_order']) : 0;
+    
+    // Validasi required fields
+    if (empty($institution)) {
+        echo json_encode(['success' => false, 'message' => 'Institution name is required']);
+        exit;
+    }
+    
+    if (empty($degree)) {
+        echo json_encode(['success' => false, 'message' => 'Degree is required']);
+        exit;
+    }
+    
+    if (empty($field_of_study)) {
+        echo json_encode(['success' => false, 'message' => 'Field of study is required']);
+        exit;
+    }
+    
+    if (empty($start_date)) {
+        echo json_encode(['success' => false, 'message' => 'Start date is required']);
+        exit;
+    }
+    
+    // Convert empty end_date to NULL
+    if (empty($end_date)) {
+        $end_date = null;
+    }
+    
+    // Convert empty description to NULL
+    if (empty($description)) {
+        $description = null;
+    }
+    
+    // Insert ke database
+    $query = "INSERT INTO education (institution, degree, field_of_study, start_date, end_date, description, display_order) 
+              VALUES (:institution, :degree, :field_of_study, :start_date, :end_date, :description, :display_order)";
+    
+    $stmt = $pdo->prepare($query);
+    $stmt->execute([
+        ':institution' => $institution,
+        ':degree' => $degree,
+        ':field_of_study' => $field_of_study,
+        ':start_date' => $start_date,
+        ':end_date' => $end_date,
+        ':description' => $description,
+        ':display_order' => $display_order
+    ]);
+    
+    echo json_encode([
+        'success' => true,
+        'message' => 'Education added successfully!',
+        'id' => $pdo->lastInsertId()
+    ]);
+    
+} catch (Exception $e) {
+    echo json_encode([
+        'success' => false,
+        'message' => 'Error: ' . $e->getMessage()
+    ]);
+}

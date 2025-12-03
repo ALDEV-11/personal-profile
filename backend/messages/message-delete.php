@@ -3,8 +3,8 @@
  * Delete Message Handler
  */
 
-require_once 'config.php';
-require_once 'functions.php';
+require_once '../database/config.php';
+require_once '../database/functions.php';
 
 requireLogin();
 
@@ -22,7 +22,7 @@ if (isset($_POST['id'])) {
 
 if ($id <= 0) {
     setFlashMessage('error', 'ID tidak valid atau tidak ditemukan');
-    header('Location: messages.php');
+    header('Location: ./');
     exit;
 }
 
@@ -33,7 +33,7 @@ $message = getMessageById($id);
 if (!$message) {
     error_log("DELETE: Message not found for ID: " . $id);
     setFlashMessage('error', 'Pesan tidak ditemukan (ID: ' . $id . ')');
-    header('Location: messages.php');
+    header('Location: ./');
     exit;
 }
 
@@ -50,5 +50,5 @@ if ($result) {
     setFlashMessage('error', 'Gagal menghapus pesan (ID: ' . $id . ')');
 }
 
-header('Location: messages.php');
+header('Location: ./');
 exit;

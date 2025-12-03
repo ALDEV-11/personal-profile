@@ -1,6 +1,190 @@
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
+    <!-- Autocomplete Script -->
+    <script>
+        class Autocomplete {
+            constructor(input, options = {}) {
+                this.input = input;
+                this.apiUrl = options.apiUrl || input.dataset.autocompleteUrl;
+                this.minChars = options.minChars || 2;
+                this.debounceDelay = options.debounceDelay || 300;
+                this.onSelect = options.onSelect || null;
+                
+                this.currentFocus = -1;
+                this.debounceTimer = null;
+                this.resultsContainer = null;
+                
+                this.init();
+            }
+            
+            init() {
+                // Create results container
+                const wrapper = document.createElement('div');
+                wrapper.className = 'autocomplete-wrapper';
+                this.input.parentNode.insertBefore(wrapper, this.input);
+                wrapper.appendChild(this.input);
+                
+                this.resultsContainer = document.createElement('div');
+                this.resultsContainer.className = 'autocomplete-results';
+                wrapper.appendChild(this.resultsContainer);
+                
+                // Bind events
+                this.input.addEventListener('input', this.handleInput.bind(this));
+                this.input.addEventListener('keydown', this.handleKeydown.bind(this));
+                document.addEventListener('click', this.handleClickOutside.bind(this));
+            }
+            
+            handleInput(e) {
+                const value = e.target.value.trim();
+                
+                clearTimeout(this.debounceTimer);
+                
+                if (value.length < this.minChars) {
+                    this.hideResults();
+                    return;
+                }
+                
+                this.debounceTimer = setTimeout(() => {
+                    this.fetchSuggestions(value);
+                }, this.debounceDelay);
+            }
+            
+            async fetchSuggestions(term) {
+                if (!this.apiUrl) {
+                    console.error('Autocomplete API URL not specified');
+                    return;
+                }
+                
+                try {
+                    this.showLoading();
+                    
+                    const response = await fetch(`${this.apiUrl}?term=${encodeURIComponent(term)}`);
+                    const data = await response.json();
+                    
+                    if (data.length === 0) {
+                        this.showNoResults();
+                    } else {
+                        this.renderSuggestions(data);
+                    }
+                } catch (error) {
+                    console.error('Autocomplete fetch error:', error);
+                    this.hideResults();
+                }
+            }
+            
+            showLoading() {
+                this.resultsContainer.innerHTML = '<div class="autocomplete-loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+                this.resultsContainer.classList.add('show');
+            }
+            
+            showNoResults() {
+                this.resultsContainer.innerHTML = '<div class="autocomplete-no-results">No suggestions found</div>';
+                this.resultsContainer.classList.add('show');
+            }
+            
+            renderSuggestions(data) {
+                this.currentFocus = -1;
+                
+                const html = data.map((item, index) => {
+                    return `
+                        <div class="autocomplete-item" data-index="${index}" data-value="${item.value}">
+                            <div class="autocomplete-item-main">${this.highlightMatch(item.label, this.input.value)}</div>
+                            ${item.subtitle ? `<div class="autocomplete-item-sub">${item.subtitle}</div>` : ''}
+                        </div>
+                    `;
+                }).join('');
+                
+                this.resultsContainer.innerHTML = html;
+                this.resultsContainer.classList.add('show');
+                
+                // Add click listeners
+                this.resultsContainer.querySelectorAll('.autocomplete-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        this.selectItem(item.dataset.value);
+                    });
+                });
+            }
+            
+            highlightMatch(text, search) {
+                const regex = new RegExp(`(${search})`, 'gi');
+                return text.replace(regex, '<strong>$1</strong>');
+            }
+            
+            handleKeydown(e) {
+                const items = this.resultsContainer.querySelectorAll('.autocomplete-item');
+                
+                if (!items.length) return;
+                
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    this.currentFocus++;
+                    if (this.currentFocus >= items.length) this.currentFocus = 0;
+                    this.setActive(items);
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    this.currentFocus--;
+                    if (this.currentFocus < 0) this.currentFocus = items.length - 1;
+                    this.setActive(items);
+                } else if (e.key === 'Enter') {
+                    if (this.currentFocus > -1) {
+                        e.preventDefault();
+                        items[this.currentFocus].click();
+                    }
+                } else if (e.key === 'Escape') {
+                    this.hideResults();
+                }
+            }
+            
+            setActive(items) {
+                items.forEach(item => item.classList.remove('active'));
+                if (this.currentFocus >= 0 && this.currentFocus < items.length) {
+                    items[this.currentFocus].classList.add('active');
+                }
+            }
+            
+            selectItem(value) {
+                this.input.value = value;
+                this.hideResults();
+                
+                if (this.onSelect) {
+                    this.onSelect(value);
+                } else {
+                    // Trigger form submission or page reload with search
+                    const form = this.input.closest('form');
+                    if (form) {
+                        form.submit();
+                    } else {
+                        // Update URL parameter and reload
+                        const url = new URL(window.location);
+                        url.searchParams.set('search', value);
+                        url.searchParams.set('page', '1');
+                        window.location.href = url.toString();
+                    }
+                }
+            }
+            
+            handleClickOutside(e) {
+                if (!this.input.parentElement.contains(e.target)) {
+                    this.hideResults();
+                }
+            }
+            
+            hideResults() {
+                this.resultsContainer.classList.remove('show');
+                this.currentFocus = -1;
+            }
+        }
+        
+        // Initialize autocomplete on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInputs = document.querySelectorAll('[data-autocomplete-url]');
+            searchInputs.forEach(input => {
+                new Autocomplete(input);
+            });
+        });
+    </script>
+    
     <!-- Custom Admin JS -->
     <script>
         // Toggle sidebar on mobile
