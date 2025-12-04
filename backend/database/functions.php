@@ -712,8 +712,8 @@ function createContactMessage($data) {
     global $pdo;
     
     try {
-        $sql = "INSERT INTO contact_messages (name, email, subject, message) 
-                VALUES (?, ?, ?, ?)";
+        $sql = "INSERT INTO contact_messages (name, email, subject, message, created_at) 
+                VALUES (?, ?, ?, ?, NOW())";
         
         $stmt = $pdo->prepare($sql);
         return $stmt->execute([
@@ -723,6 +723,7 @@ function createContactMessage($data) {
             $data['message']
         ]);
     } catch (PDOException $e) {
+        error_log("Error creating message: " . $e->getMessage());
         return false;
     }
 }

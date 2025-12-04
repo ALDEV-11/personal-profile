@@ -150,11 +150,28 @@ include '../partials/sidebar.php';
                                         <span class="badge bg-secondary"><?php echo htmlspecialchars($skill['category']); ?></span>
                                     </td>
                                     <td>
-                                        <div class="progress" style="height: 25px;">
-                                            <div class="progress-bar" role="progressbar" style="width: <?php echo $skill['skill_level']; ?>%;" aria-valuenow="<?php echo $skill['skill_level']; ?>" aria-valuemin="0" aria-valuemax="100">
-                                                <?php echo $skill['skill_level']; ?>%
-                                            </div>
-                                        </div>
+                                        <?php
+                                        $level = strtolower($skill['skill_level']);
+                                        $badgeClass = '';
+                                        $badgeText = ucfirst($level);
+                                        
+                                        switch($level) {
+                                            case 'beginner':
+                                                $badgeClass = 'bg-info';
+                                                break;
+                                            case 'intermediate':
+                                                $badgeClass = 'bg-warning text-dark';
+                                                break;
+                                            case 'advanced':
+                                                $badgeClass = 'bg-success';
+                                                break;
+                                            default:
+                                                $badgeClass = 'bg-secondary';
+                                        }
+                                        ?>
+                                        <span class="badge <?php echo $badgeClass; ?>" style="font-size: 0.9rem; padding: 0.5rem 1rem;">
+                                            <?php echo $badgeText; ?>
+                                        </span>
                                     </td>
                                     <td class="text-center">
                                         <i class="<?php echo htmlspecialchars($skill['icon']); ?>" style="font-size: 1.5rem;"></i>
@@ -290,12 +307,13 @@ include '../partials/sidebar.php';
                         <label for="add_skill_level" class="form-label">
                             Skill Level <span class="text-danger">*</span>
                         </label>
-                        <input type="range" class="form-range" id="add_skill_level" name="skill_level" min="0" max="100" step="5" value="50" required>
-                        <div class="d-flex justify-content-between">
-                            <small class="text-muted">0%</small>
-                            <strong id="add_skill_level_value">50%</strong>
-                            <small class="text-muted">100%</small>
-                        </div>
+                        <select class="form-select" id="add_skill_level" name="skill_level" required>
+                            <option value="">-- Select Level --</option>
+                            <option value="beginner">Beginner</option>
+                            <option value="intermediate" selected>Intermediate</option>
+                            <option value="advanced">Advanced</option>
+                        </select>
+                        <small class="text-muted">Choose your proficiency level</small>
                     </div>
                     
                     <div class="mb-3">
@@ -357,12 +375,13 @@ include '../partials/sidebar.php';
                         <label for="edit_skill_level" class="form-label">
                             Skill Level <span class="text-danger">*</span>
                         </label>
-                        <input type="range" class="form-range" id="edit_skill_level" name="skill_level" min="0" max="100" step="5" required>
-                        <div class="d-flex justify-content-between">
-                            <small class="text-muted">0%</small>
-                            <strong id="edit_skill_level_value">50%</strong>
-                            <small class="text-muted">100%</small>
-                        </div>
+                        <select class="form-select" id="edit_skill_level" name="skill_level" required>
+                            <option value="">-- Select Level --</option>
+                            <option value="beginner">Beginner</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="advanced">Advanced</option>
+                        </select>
+                        <small class="text-muted">Choose your proficiency level</small>
                     </div>
                     
                     <div class="mb-3">
@@ -395,13 +414,6 @@ include '../partials/sidebar.php';
 // Load skill data into modal when edit button clicked
 document.addEventListener('DOMContentLoaded', function() {
     const editButtons = document.querySelectorAll('.btn-edit-skill');
-    const skillLevelInput = document.getElementById('edit_skill_level');
-    const skillLevelValue = document.getElementById('edit_skill_level_value');
-    
-    // Update skill level display
-    skillLevelInput.addEventListener('input', function() {
-        skillLevelValue.textContent = this.value + '%';
-    });
     
     editButtons.forEach(button => {
         button.addEventListener('click', function() {
@@ -419,7 +431,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.getElementById('edit_skill_name').value = skill.skill_name;
                         document.getElementById('edit_category').value = skill.category;
                         document.getElementById('edit_skill_level').value = skill.skill_level;
-                        document.getElementById('edit_skill_level_value').textContent = skill.skill_level + '%';
                         document.getElementById('edit_icon').value = skill.icon || '';
                         document.getElementById('edit_display_order').value = skill.display_order;
                     } else {
@@ -466,14 +477,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Handle Add Skill Form submission
-    const addSkillLevelInput = document.getElementById('add_skill_level');
-    const addSkillLevelValue = document.getElementById('add_skill_level_value');
-    
-    // Update skill level display for Add form
-    addSkillLevelInput.addEventListener('input', function() {
-        addSkillLevelValue.textContent = this.value + '%';
-    });
-    
     document.getElementById('addSkillForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
@@ -489,7 +492,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 Swal.fire({
                     icon: 'success',
                     title: 'Success!',
-                    text: 'Edit Successfully',
+                    text: 'Skill Added Successfully',
                     showConfirmButton: false,
                     timer: 1500
                 }).then(() => {

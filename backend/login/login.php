@@ -7,6 +7,11 @@
 require_once '../database/config.php';
 require_once '../database/functions.php';
 
+// Prevent browser caching
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+
 // Jika sudah login, redirect ke dashboard
 if (isLoggedIn()) {
     redirect(BACKEND_URL . 'index.php');

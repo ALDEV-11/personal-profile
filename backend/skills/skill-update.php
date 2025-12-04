@@ -33,7 +33,7 @@ if (!$skill) {
 $data = [
     'skill_name' => sanitize($_POST['skill_name'] ?? ''),
     'category' => sanitize($_POST['category'] ?? ''),
-    'skill_level' => (int)($_POST['skill_level'] ?? 0),
+    'skill_level' => strtolower(sanitize($_POST['skill_level'] ?? '')),
     'icon' => sanitize($_POST['icon'] ?? ''),
     'display_order' => (int)($_POST['display_order'] ?? 0)
 ];
@@ -49,8 +49,10 @@ if (empty($data['category'])) {
     exit;
 }
 
-if ($data['skill_level'] < 0 || $data['skill_level'] > 100) {
-    echo json_encode(['success' => false, 'message' => 'Skill level harus antara 0-100']);
+// Validasi skill level
+$valid_levels = ['beginner', 'intermediate', 'advanced'];
+if (empty($data['skill_level']) || !in_array($data['skill_level'], $valid_levels)) {
+    echo json_encode(['success' => false, 'message' => 'Skill level harus dipilih (beginner, intermediate, atau advanced)']);
     exit;
 }
 

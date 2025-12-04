@@ -38,123 +38,47 @@ include 'partials/sidebar.php';
     <!-- Flash Messages -->
     <?php displayFlashMessage(); ?>
     
-    <!-- Main Statistics Pie Chart -->
+    <!-- Main Statistics & Quick Actions -->
     <div class="row g-4 mb-4">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="row align-items-center">
+                    <div class="row">
                         <!-- Pie Chart -->
                         <div class="col-lg-6">
                             <h5 class="mb-4">
                                 <i class="fas fa-chart-pie me-2"></i> Statistics Overview
                             </h5>
-                            <div style="position: relative; height: 350px;">
+                            <div style="position: relative; height: 400px;">
                                 <canvas id="mainStatsChart"></canvas>
                             </div>
                         </div>
                         
-                        <!-- Statistics Details -->
+                        <!-- Quick Actions -->
                         <div class="col-lg-6">
-                            <div class="row g-3">
-                                <!-- Skills -->
-                                <div class="col-md-6">
-                                    <div class="p-3 rounded" style="background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); border-left: 4px solid #667eea;">
-                                        <div class="d-flex align-items-center mb-2">
-                                            <div class="rounded-circle me-3" style="width: 40px; height: 40px; background: #667eea; display: flex; align-items: center; justify-content: center;">
-                                                <i class="fas fa-code" style="color: white;"></i>
-                                            </div>
-                                            <div>
-                                                <h6 class="mb-0 text-muted" style="font-size: 0.75rem;">SKILLS</h6>
-                                                <h3 class="mb-0" style="color: #667eea; font-weight: 700;"><?php echo $stats['total_skills']; ?></h3>
-                                            </div>
-                                        </div>
-                                        <a href="skills/" class="btn btn-sm btn-outline-primary w-100">
-                                            Manage <i class="fas fa-arrow-right ms-1"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                                
-                                <!-- Projects -->
-                                <div class="col-md-6">
-                                    <div class="p-3 rounded" style="background: linear-gradient(135deg, #10B98115 0%, #05966915 100%); border-left: 4px solid #10B981;">
-                                        <div class="d-flex align-items-center mb-2">
-                                            <div class="rounded-circle me-3" style="width: 40px; height: 40px; background: #10B981; display: flex; align-items: center; justify-content: center;">
-                                                <i class="fas fa-folder-open" style="color: white;"></i>
-                                            </div>
-                                            <div>
-                                                <h6 class="mb-0 text-muted" style="font-size: 0.75rem;">PROJECTS</h6>
-                                                <h3 class="mb-0" style="color: #10B981; font-weight: 700;"><?php echo $stats['total_projects']; ?></h3>
-                                            </div>
-                                        </div>
-                                        <a href="projects/" class="btn btn-sm btn-outline-success w-100">
-                                            Manage <i class="fas fa-arrow-right ms-1"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                                
-                                <!-- Education -->
-                                <div class="col-md-6">
-                                    <div class="p-3 rounded" style="background: linear-gradient(135deg, #F59E0B15 0%, #D9770615 100%); border-left: 4px solid #F59E0B;">
-                                        <div class="d-flex align-items-center mb-2">
-                                            <div class="rounded-circle me-3" style="width: 40px; height: 40px; background: #F59E0B; display: flex; align-items: center; justify-content: center;">
-                                                <i class="fas fa-graduation-cap" style="color: white;"></i>
-                                            </div>
-                                            <div>
-                                                <h6 class="mb-0 text-muted" style="font-size: 0.75rem;">EDUCATION</h6>
-                                                <h3 class="mb-0" style="color: #F59E0B; font-weight: 700;"><?php echo $stats['total_education']; ?></h3>
-                                            </div>
-                                        </div>
-                                        <a href="education/" class="btn btn-sm btn-outline-warning w-100">
-                                            Manage <i class="fas fa-arrow-right ms-1"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                                
-                                <!-- Experience -->
-                                <div class="col-md-6">
-                                    <div class="p-3 rounded" style="background: linear-gradient(135deg, #8B5CF615 0%, #6B21A815 100%); border-left: 4px solid #8B5CF6;">
-                                        <div class="d-flex align-items-center mb-2">
-                                            <div class="rounded-circle me-3" style="width: 40px; height: 40px; background: #8B5CF6; display: flex; align-items: center; justify-content: center;">
-                                                <i class="fas fa-briefcase" style="color: white;"></i>
-                                            </div>
-                                            <div>
-                                                <h6 class="mb-0 text-muted" style="font-size: 0.75rem;">EXPERIENCE</h6>
-                                                <h3 class="mb-0" style="color: #8B5CF6; font-weight: 700;"><?php echo $stats['total_experience']; ?></h3>
-                                            </div>
-                                        </div>
-                                        <a href="experience/" class="btn btn-sm btn-outline-secondary w-100" style="color: #8B5CF6; border-color: #8B5CF6;">
-                                            Manage <i class="fas fa-arrow-right ms-1"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                                
-                                <!-- Messages -->
-                                <div class="col-md-12">
-                                    <div class="p-3 rounded" style="background: linear-gradient(135deg, #EF444415 0%, #DC262615 100%); border-left: 4px solid #EF4444;">
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <div class="d-flex align-items-center">
-                                                <div class="rounded-circle me-3" style="width: 40px; height: 40px; background: #EF4444; display: flex; align-items: center; justify-content: center;">
-                                                    <i class="fas fa-envelope" style="color: white;"></i>
-                                                </div>
-                                                <div>
-                                                    <h6 class="mb-0 text-muted" style="font-size: 0.75rem;">MESSAGES</h6>
-                                                    <h3 class="mb-0" style="color: #EF4444; font-weight: 700;"><?php echo $stats['total_messages']; ?></h3>
-                                                    <small class="text-muted">
-                                                        <?php if ($stats['unread_messages'] > 0): ?>
-                                                            <span class="badge bg-danger"><?php echo $stats['unread_messages']; ?> Unread</span>
-                                                        <?php else: ?>
-                                                            <i class="fas fa-check-circle text-success"></i> All Read
-                                                        <?php endif; ?>
-                                                    </small>
-                                                </div>
-                                            </div>
-                                            <a href="messages/" class="btn btn-sm btn-outline-danger">
-                                                View <i class="fas fa-arrow-right ms-1"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
+                            <h5 class="mb-4">
+                                <i class="fas fa-bolt me-2"></i> Quick Actions
+                            </h5>
+                            <div class="d-grid gap-2">
+                                <a href="profile/" class="btn btn-outline-primary text-start">
+                                    <i class="fas fa-user-circle me-2"></i> Edit Profile
+                                </a>
+                                <a href="skills/" class="btn btn-outline-primary text-start">
+                                    <i class="fas fa-plus-circle me-2"></i> Manage Skills
+                                </a>
+                                <a href="projects/" class="btn btn-outline-primary text-start">
+                                    <i class="fas fa-plus-circle me-2"></i> Manage Projects
+                                </a>
+                                <a href="education/" class="btn btn-outline-primary text-start">
+                                    <i class="fas fa-plus-circle me-2"></i> Manage Education
+                                </a>
+                                <a href="experience/" class="btn btn-outline-primary text-start">
+                                    <i class="fas fa-plus-circle me-2"></i> Manage Experience
+                                </a>
+                                <a href="social-media/" class="btn btn-outline-primary text-start">
+                                    <i class="fas fa-plus-circle me-2"></i> Manage Social Media
+                                </a>
+                               
                             </div>
                         </div>
                     </div>
@@ -165,7 +89,7 @@ include 'partials/sidebar.php';
     
     <!-- Recent Messages -->
     <div class="row g-4">
-        <div class="col-lg-8">
+        <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">
@@ -181,7 +105,7 @@ include 'partials/sidebar.php';
                         </div>
                     <?php else: ?>
                         <div class="table-responsive" style="border-bottom-left-radius: 0.375rem; border-bottom-right-radius: 0.375rem; overflow: hidden;">
-                            <table class="table table-hover mb-0">
+                            <table id="messagesTable" class="table table-hover mb-0">
                                 <thead>
                                     <tr>
                                         <th style="width: 30px;"></th>
@@ -206,7 +130,9 @@ include 'partials/sidebar.php';
                                             </td>
                                             <td><?php echo truncate($message['subject'], 50); ?></td>
                                             <td>
-                                                <small class="text-muted"><?php echo timeAgo($message['created_at']); ?></small>
+                                                <small class="text-muted time-ago" data-timestamp="<?php echo strtotime($message['created_at']); ?>">
+                                                    <?php echo timeAgo($message['created_at']); ?>
+                                                </small>
                                             </td>
                                             <td>
                                                 <button type="button" class="btn btn-sm btn-outline-primary" onclick="viewMessage(<?php echo $message['id']; ?>)">
@@ -219,39 +145,6 @@ include 'partials/sidebar.php';
                             </table>
                         </div>
                     <?php endif; ?>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Quick Actions -->
-        <div class="col-lg-4">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="fas fa-bolt me-2"></i> Quick Actions
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-grid gap-2">
-                        <a href="profile/" class="btn btn-outline-primary text-start">
-                            <i class="fas fa-user-circle me-2"></i> Edit Profile
-                        </a>
-                        <a href="skills/" class="btn btn-outline-primary text-start">
-                            <i class="fas fa-plus-circle me-2"></i> Manage Skills
-                        </a>
-                        <a href="projects/" class="btn btn-outline-primary text-start">
-                            <i class="fas fa-plus-circle me-2"></i> Manage Projects
-                        </a>
-                        <a href="education/" class="btn btn-outline-primary text-start">
-                            <i class="fas fa-plus-circle me-2"></i> Manage Education
-                        </a>
-                        <a href="experience-form.php" class="btn btn-outline-primary text-start">
-                            <i class="fas fa-plus-circle me-2"></i> Add Experience
-                        </a>
-                        <a href="social-form.php" class="btn btn-outline-primary text-start">
-                            <i class="fas fa-plus-circle me-2"></i> Add Social Media
-                        </a>
-                    </div>
                 </div>
             </div>
         </div>
@@ -350,11 +243,6 @@ async function viewMessage(id) {
                 </div>
                 
                 <div class="mb-3">
-                    <label class="form-label fw-bold text-muted">Phone:</label>
-                    <div>${message.phone || '-'}</div>
-                </div>
-                
-                <div class="mb-3">
                     <label class="form-label fw-bold text-muted">Subject:</label>
                     <div>${message.subject}</div>
                 </div>
@@ -404,6 +292,11 @@ async function viewMessage(id) {
 
 // Initialize Pie Charts
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize DataTable for Messages
+    <?php if (!empty($recentMessages)): ?>
+  
+    <?php endif; ?>
+    
     // Common chart options
     const chartOptions = {
         responsive: true,
@@ -425,7 +318,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const mainStatsCtx = document.getElementById('mainStatsChart');
     if (mainStatsCtx) {
         new Chart(mainStatsCtx, {
-            type: 'doughnut',
+            type: 'pie',
             data: {
                 labels: ['Skills', 'Projects', 'Education', 'Experience', 'Messages'],
                 datasets: [{

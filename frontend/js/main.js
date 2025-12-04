@@ -115,33 +115,10 @@ document.addEventListener('DOMContentLoaded', function() {
     */
     
     // ========================================
-    // SKILLS PROGRESS ANIMATION (DISABLED)
+    // SKILLS SECTION (Using Badge Levels)
     // ========================================
-    
-    const skillProgressBars = document.querySelectorAll('.skill-progress');
-    
-    // Langsung set width tanpa observer
-    skillProgressBars.forEach(bar => {
-        const progress = bar.dataset.progress;
-        bar.style.width = progress + '%';
-    });
-    
-    // Observer dinonaktifkan
-    /*
-    const skillObserver = new IntersectionObserver(function(entries) {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const progress = entry.target.dataset.progress;
-                setTimeout(() => {
-                    entry.target.style.width = progress + '%';
-                }, 200);
-                skillObserver.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.5 });
-    
-    skillProgressBars.forEach(bar => skillObserver.observe(bar));
-    */
+    // Progress bars removed, now using text-based level badges
+    // (Beginner, Intermediate, Advanced)
     
     // ========================================
     // PROJECT FILTER

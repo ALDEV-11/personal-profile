@@ -219,17 +219,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
                     <div class="skills-category" data-animate="fade-up">
                         <h3 class="category-title"><?php echo htmlspecialchars($category); ?></h3>
                         <div class="skills-list">
-                            <?php foreach ($categorySkills as $skill): ?>
+                            <?php foreach ($categorySkills as $skill): 
+                                $level = strtolower($skill['skill_level']);
+                                $badgeClass = ($level == 'beginner') ? 'skill-badge-beginner' : 
+                                              (($level == 'intermediate') ? 'skill-badge-intermediate' : 'skill-badge-advanced');
+                            ?>
                                 <div class="skill-item">
                                     <div class="skill-header">
                                         <div class="skill-name">
                                             <i class="<?php echo htmlspecialchars($skill['icon']); ?>"></i>
                                             <span><?php echo htmlspecialchars($skill['skill_name']); ?></span>
                                         </div>
-                                        <span class="skill-percentage"><?php echo $skill['skill_level']; ?>%</span>
-                                    </div>
-                                    <div class="skill-bar">
-                                        <div class="skill-progress" data-progress="<?php echo $skill['skill_level']; ?>"></div>
+                                        <span class="skill-level-badge <?php echo $badgeClass; ?>">
+                                            <?php echo ucfirst($level); ?>
+                                        </span>
                                     </div>
                                 </div>
                             <?php endforeach; ?>

@@ -156,8 +156,8 @@ include '../partials/sidebar.php';
                                     <td><?php echo htmlspecialchars($education['field_of_study']); ?></td>
                                     <td>
                                         <small class="text-muted">
-                                            <?php echo date('M Y', strtotime($education['start_date'])); ?> - 
-                                            <?php echo $education['end_date'] ? date('M Y', strtotime($education['end_date'])) : 'Present'; ?>
+                                            <?php echo htmlspecialchars($education['start_date']); ?> - 
+                                            <?php echo $education['end_date'] ? htmlspecialchars($education['end_date']) : 'Present'; ?>
                                         </small>
                                     </td>
                                     <td>
@@ -275,13 +275,13 @@ include '../partials/sidebar.php';
                         </div>
                         
                         <div class="col-md-6 mb-3">
-                            <label for="add_start_date" class="form-label">Start Date <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" id="add_start_date" name="start_date" required>
+                            <label for="add_start_date" class="form-label">Start Year <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="add_start_date" name="start_date" required min="1900" max="2100" placeholder="2020">
                         </div>
                         
                         <div class="col-md-6 mb-3">
-                            <label for="add_end_date" class="form-label">End Date</label>
-                            <input type="date" class="form-control" id="add_end_date" name="end_date">
+                            <label for="add_end_date" class="form-label">End Year</label>
+                            <input type="number" class="form-control" id="add_end_date" name="end_date" min="1900" max="2100" placeholder="2024">
                             <small class="text-muted">Leave empty if still studying</small>
                         </div>
                         
@@ -340,13 +340,13 @@ include '../partials/sidebar.php';
                         </div>
                         
                         <div class="col-md-6 mb-3">
-                            <label for="edit_start_date" class="form-label">Start Date <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" id="edit_start_date" name="start_date" required>
+                            <label for="edit_start_date" class="form-label">Start Year <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="edit_start_date" name="start_date" required min="1900" max="2100" placeholder="2020">
                         </div>
                         
                         <div class="col-md-6 mb-3">
-                            <label for="edit_end_date" class="form-label">End Date</label>
-                            <input type="date" class="form-control" id="edit_end_date" name="end_date">
+                            <label for="edit_end_date" class="form-label">End Year</label>
+                            <input type="number" class="form-control" id="edit_end_date" name="end_date" min="1900" max="2100" placeholder="2024">
                             <small class="text-muted">Leave empty if still studying</small>
                         </div>
                         

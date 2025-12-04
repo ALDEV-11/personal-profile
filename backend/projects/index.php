@@ -85,7 +85,7 @@ include '../partials/sidebar.php';
     <div class="card">
         <div class="card-header">
             <h5 class="mb-0">
-                <i class="fas fa-list me-2"></i> All Projects (<?php echo $totalRecords; ?>)
+                <i class="fas fa-list me-2"></i> All Projects 
             </h5>
         </div>
         <div class="card-body">

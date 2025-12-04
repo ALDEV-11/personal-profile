@@ -82,8 +82,8 @@ CREATE TABLE education (
     institution VARCHAR(200) NOT NULL,
     degree VARCHAR(100) NOT NULL,
     field_of_study VARCHAR(100) NOT NULL,
-    start_date DATE NOT NULL,
-    end_date DATE,
+    start_date VARCHAR(4) NOT NULL COMMENT 'Year only (e.g., 2020)',
+    end_date VARCHAR(4) COMMENT 'Year only (e.g., 2024)',
     description TEXT,
     display_order INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

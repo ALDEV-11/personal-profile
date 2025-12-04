@@ -64,8 +64,26 @@ try {
     }
     
     if (empty($start_date)) {
-        echo json_encode(['success' => false, 'message' => 'Start date is required']);
+        echo json_encode(['success' => false, 'message' => 'Start year is required']);
         exit;
+    }
+    
+    // Validasi format tahun
+    if (!is_numeric($start_date) || $start_date < 1900 || $start_date > 2100) {
+        echo json_encode(['success' => false, 'message' => 'Invalid start year format']);
+        exit;
+    }
+    
+    // Validasi end_date jika diisi
+    if (!empty($end_date)) {
+        if (!is_numeric($end_date) || $end_date < 1900 || $end_date > 2100) {
+            echo json_encode(['success' => false, 'message' => 'Invalid end year format']);
+            exit;
+        }
+        if ($end_date < $start_date) {
+            echo json_encode(['success' => false, 'message' => 'End year cannot be before start year']);
+            exit;
+        }
     }
     
     // Convert empty end_date to NULL

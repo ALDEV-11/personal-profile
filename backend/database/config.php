@@ -5,9 +5,21 @@
  * Project: Personal Profile Website - PKL
  */
 
-// Mulai session jika belum dimulai
+// Mulai session dengan security settings
 if (session_status() === PHP_SESSION_NONE) {
+    // Set session security parameters
+    ini_set('session.cookie_httponly', 1);
+    ini_set('session.use_only_cookies', 1);
+    ini_set('session.cookie_secure', 0); // Set to 1 if using HTTPS
+    ini_set('session.cookie_samesite', 'Strict');
+    
     session_start();
+    
+    // Regenerate session ID on login to prevent session fixation
+    if (!isset($_SESSION['initiated'])) {
+        session_regenerate_id(true);
+        $_SESSION['initiated'] = true;
+    }
 }
 
 // ============================================
@@ -88,14 +100,44 @@ $db = $pdo; // Alias for backward compatibility
  * Check jika user sudah login
  */
 function isLoggedIn() {
-    return isset($_SESSION['user_id']) && isset($_SESSION['username']);
+    // Check if session variables exist and are valid
+    if (!isset($_SESSION['user_id']) || !isset($_SESSION['username'])) {
+        return false;
+    }
+    
+    // Additional check: verify session is not expired
+    if (isset($_SESSION['last_activity'])) {
+        $inactive = 3600; // 1 hour timeout
+        if ((time() - $_SESSION['last_activity']) > $inactive) {
+            // Session expired
+            session_unset();
+            session_destroy();
+            return false;
+        }
+    }
+    
+    // Update last activity time
+    $_SESSION['last_activity'] = time();
+    
+    return true;
 }
 
 /**
  * Redirect ke login jika belum login
  */
 function requireLogin() {
+    // Prevent browser caching
+    header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+    header("Cache-Control: post-check=0, pre-check=0", false);
+    header("Pragma: no-cache");
+    header("Expires: 0");
+    
     if (!isLoggedIn()) {
+        // Clear any remaining session data
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_unset();
+            session_destroy();
+        }
         header('Location: ' . BACKEND_URL . 'login/login.php');
         exit();
     }
@@ -127,9 +169,16 @@ function loginUser($username, $password) {
     $user = $stmt->fetch();
     
     if ($user && password_verify($password, $user['password'])) {
+        // Regenerate session ID to prevent session fixation
+        session_regenerate_id(true);
+        
+        // Set session variables
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
         $_SESSION['email'] = $user['email'];
+        $_SESSION['last_activity'] = time();
+        $_SESSION['initiated'] = true;
+        
         return true;
     }
     
@@ -140,7 +189,37 @@ function loginUser($username, $password) {
  * Logout user
  */
 function logoutUser() {
+    // Start session if not started
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    
+    // Unset all session variables
+    $_SESSION = array();
+    
+    // Delete session cookie from browser
+    if (isset($_COOKIE[session_name()])) {
+        $params = session_get_cookie_params();
+        setcookie(session_name(), '', time() - 42000,
+            $params["path"], $params["domain"],
+            $params["secure"], $params["httponly"]
+        );
+    }
+    
+    // Destroy session file on server
     session_destroy();
+    
+    // Start new empty session to prevent issues
+    session_start();
+    session_regenerate_id(true);
+    
+    // Prevent browser cache
+    header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+    header("Cache-Control: post-check=0, pre-check=0", false);
+    header("Pragma: no-cache");
+    header("Expires: Thu, 01 Jan 1970 00:00:00 GMT");
+    
+    // Redirect to login
     header('Location: ' . BACKEND_URL . 'login/login.php');
     exit();
 }
@@ -264,8 +343,14 @@ function verifyCSRFToken($token) {
  * Format tanggal Indonesia
  */
 function formatDateIndo($date) {
-    if (empty($date)) return '-';
+    if (empty($date)) return 'Present';
     
+    // Jika hanya tahun (numeric 4 digit)
+    if (is_numeric($date) && strlen($date) == 4) {
+        return $date;
+    }
+    
+    // Jika format date lengkap
     $months = [
         1 => 'Januari', 'Februari', 'Maret', 'April', 'Mai', 'Juni',
         'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
@@ -281,22 +366,60 @@ function formatDateIndo($date) {
 
 /**
  * Time ago function
+ * Menampilkan waktu relatif dalam bahasa Indonesia
  */
 function timeAgo($datetime) {
-    $timestamp = strtotime($datetime);
-    $difference = time() - $timestamp;
+    // Validasi input
+    if (empty($datetime) || $datetime == '0000-00-00 00:00:00') {
+        return 'Tidak diketahui';
+    }
     
-    if ($difference < 60) {
-        return $difference . ' detik yang lalu';
-    } elseif ($difference < 3600) {
-        return floor($difference / 60) . ' menit yang lalu';
-    } elseif ($difference < 86400) {
-        return floor($difference / 3600) . ' jam yang lalu';
-    } elseif ($difference < 604800) {
-        return floor($difference / 86400) . ' hari yang lalu';
-    } else {
+    $timestamp = strtotime($datetime);
+    
+    // Jika strtotime gagal parse
+    if ($timestamp === false || $timestamp === -1) {
+        return 'Tanggal tidak valid';
+    }
+    
+    $now = time();
+    $difference = $now - $timestamp;
+    
+    // Jika tanggal di masa depan (negatif), set ke 0
+    if ($difference < 0) {
+        $difference = 0;
+    }
+    
+    // Debug: untuk data yang sangat lama, cek apakah timestamp terlalu kecil
+    if ($difference > 31536000) { // > 1 tahun
         return formatDateIndo($datetime);
     }
+    
+    // Kurang dari 60 detik
+    if ($difference < 60) {
+        $seconds = max(0, floor($difference));
+        return $seconds . ' detik yang lalu';
+    }
+    
+    // Kurang dari 60 menit (3600 detik)
+    if ($difference < 3600) {
+        $minutes = floor($difference / 60);
+        return $minutes . ' menit yang lalu';
+    }
+    
+    // Kurang dari 24 jam (86400 detik)
+    if ($difference < 86400) {
+        $hours = floor($difference / 3600);
+        return $hours . ' jam yang lalu';
+    }
+    
+    // Kurang dari 30 hari (2592000 detik)
+    if ($difference < 2592000) {
+        $days = floor($difference / 86400);
+        return $days . ' hari yang lalu';
+    }
+    
+    // Lebih dari 30 hari, tampilkan format tanggal lengkap
+    return formatDateIndo($datetime);
 }
 
 /**
