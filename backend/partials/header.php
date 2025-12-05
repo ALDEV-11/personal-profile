@@ -532,6 +532,32 @@ $pageTitle = ucfirst(str_replace('-', ' ', $currentPage));
 </head>
 <body>
     
+    <!-- Anti-Back-Button Security Script -->
+    <script>
+        // Prevent back button after logout
+        (function() {
+            // Disable back button
+            history.pushState(null, null, location.href);
+            window.onpopstate = function () {
+                history.pushState(null, null, location.href);
+            };
+            
+            // Additional security: reload page if coming from cache
+            window.addEventListener('pageshow', function(event) {
+                if (event.persisted) {
+                    // Page was loaded from cache (back button)
+                    window.location.reload();
+                }
+            });
+            
+            // Prevent browser from caching this page
+            if (window.performance && window.performance.navigation.type === 2) {
+                // Page was accessed by navigating into the history (back button)
+                window.location.reload();
+            }
+        })();
+    </script>
+    
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">

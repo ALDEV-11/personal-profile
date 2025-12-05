@@ -308,12 +308,6 @@ include '../partials/sidebar.php';
                         <label for="add_description" class="form-label">Description</label>
                         <textarea class="form-control" id="add_description" name="description" rows="4" placeholder="Describe your responsibilities and achievements..."></textarea>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label for="add_display_order" class="form-label">Display Order</label>
-                        <input type="number" class="form-control" id="add_display_order" name="display_order" value="0" min="0">
-                        <small class="text-muted">Lower numbers appear first</small>
-                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
@@ -381,12 +375,6 @@ include '../partials/sidebar.php';
                         <label for="edit_description" class="form-label">Description</label>
                         <textarea class="form-control" id="edit_description" name="description" rows="4" placeholder="Describe your responsibilities and achievements..."></textarea>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label for="edit_display_order" class="form-label">Display Order</label>
-                        <input type="number" class="form-control" id="edit_display_order" name="display_order" value="0" min="0">
-                        <small class="text-muted">Lower numbers appear first</small>
-                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
@@ -429,7 +417,6 @@ function editExperience(id) {
                 document.getElementById('edit_start_date').value = exp.start_date;
                 document.getElementById('edit_end_date').value = exp.end_date || '';
                 document.getElementById('edit_description').value = exp.description || '';
-                document.getElementById('edit_display_order').value = exp.display_order;
                 document.getElementById('edit_is_current').checked = exp.is_current == 1;
                 
                 // Toggle end date field

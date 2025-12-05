@@ -313,8 +313,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         row.classList.remove('table-primary');
                     }
                     
-                    // Update counter unread di sidebar (jika ada)
-                    updateUnreadCounter();
+                    // Update counter unread di navbar dengan nilai dari server
+                    updateUnreadCounter(data.unreadCount);
                 }
             })
             .catch(error => console.error('Error:', error));
@@ -358,15 +358,24 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Function untuk update counter
-    function updateUnreadCounter() {
-        // Hitung jumlah badge unread yang tersisa
-        const remainingUnread = document.querySelectorAll('.unread-indicator').length;
+    function updateUnreadCounter(serverCount) {
+        // Update badge di navbar (bell icon)
+        const navBadge = document.querySelector('.notification-badge');
+        if (navBadge) {
+            if (serverCount > 0) {
+                navBadge.textContent = serverCount > 99 ? '99+' : serverCount;
+                navBadge.style.display = '';
+            } else {
+                // Sembunyikan badge jika tidak ada pesan unread
+                navBadge.style.display = 'none';
+            }
+        }
         
-        // Update semua counter yang ada
-        const counters = document.querySelectorAll('.badge-danger, .unread-count');
-        counters.forEach(counter => {
-            if (remainingUnread > 0) {
-                counter.textContent = remainingUnread;
+        // Update counter lain jika ada (di sidebar atau tempat lain)
+        const otherCounters = document.querySelectorAll('.badge-danger, .unread-count');
+        otherCounters.forEach(counter => {
+            if (serverCount > 0) {
+                counter.textContent = serverCount > 99 ? '99+' : serverCount;
                 counter.style.display = '';
             } else {
                 counter.style.display = 'none';

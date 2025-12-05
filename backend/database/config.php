@@ -105,6 +105,16 @@ function isLoggedIn() {
         return false;
     }
     
+    // Check if session was initiated properly
+    if (!isset($_SESSION['initiated']) || $_SESSION['initiated'] !== true) {
+        return false;
+    }
+    
+    // Check if logged_out flag exists (user has logged out)
+    if (isset($_SESSION['logged_out']) && $_SESSION['logged_out'] === true) {
+        return false;
+    }
+    
     // Additional check: verify session is not expired
     if (isset($_SESSION['last_activity'])) {
         $inactive = 3600; // 1 hour timeout
@@ -126,18 +136,41 @@ function isLoggedIn() {
  * Redirect ke login jika belum login
  */
 function requireLogin() {
-    // Prevent browser caching
+    // CRITICAL: Prevent ALL forms of caching
     header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
     header("Cache-Control: post-check=0, pre-check=0", false);
     header("Pragma: no-cache");
-    header("Expires: 0");
+    header("Expires: Mon, 01 Jan 1990 00:00:00 GMT");
+    header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
     
+    // Check if user is logged in
     if (!isLoggedIn()) {
         // Clear any remaining session data
         if (session_status() === PHP_SESSION_ACTIVE) {
+            $_SESSION = array();
             session_unset();
             session_destroy();
         }
+        
+        // Prevent back button access
+        echo '<script>
+            // Disable back button functionality
+            history.pushState(null, null, location.href);
+            window.onpopstate = function () {
+                history.go(1);
+            };
+        </script>';
+        
+        header('Location: ' . BACKEND_URL . 'login/login.php');
+        exit();
+    }
+    
+    // Additional security: Check if session is marked as logged out
+    if (isset($_SESSION['logged_out']) && $_SESSION['logged_out'] === true) {
+        $_SESSION = array();
+        session_unset();
+        session_destroy();
+        
         header('Location: ' . BACKEND_URL . 'login/login.php');
         exit();
     }
@@ -194,32 +227,63 @@ function logoutUser() {
         session_start();
     }
     
+    // Mark session as logged out BEFORE clearing
+    $_SESSION['logged_out'] = true;
+    
     // Unset all session variables
     $_SESSION = array();
     
-    // Delete session cookie from browser
+    // Delete session cookie from browser with secure parameters
     if (isset($_COOKIE[session_name()])) {
         $params = session_get_cookie_params();
         setcookie(session_name(), '', time() - 42000,
-            $params["path"], $params["domain"],
-            $params["secure"], $params["httponly"]
+            $params["path"], 
+            $params["domain"],
+            $params["secure"], 
+            $params["httponly"]
         );
+        
+        // Also try to unset the cookie directly
+        setcookie(session_name(), '', time() - 42000, '/');
     }
     
     // Destroy session file on server
     session_destroy();
     
-    // Start new empty session to prevent issues
+    // Start new empty session and mark as logged out
     session_start();
     session_regenerate_id(true);
+    $_SESSION['logged_out'] = true;
     
-    // Prevent browser cache
+    // CRITICAL: Maximum cache prevention headers
     header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
     header("Cache-Control: post-check=0, pre-check=0", false);
     header("Pragma: no-cache");
-    header("Expires: Thu, 01 Jan 1970 00:00:00 GMT");
+    header("Expires: Mon, 01 Jan 1990 00:00:00 GMT");
+    header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
     
-    // Redirect to login
+    // Clear browser history with JavaScript before redirect
+    echo '<script>
+        // Clear forward history
+        if (window.history && window.history.pushState) {
+            window.history.pushState(null, null, window.location.href);
+            window.onpopstate = function () {
+                window.history.go(1);
+            };
+        }
+        
+        // Clear any cached data
+        if ("caches" in window) {
+            caches.keys().then(function(names) {
+                for (let name of names) caches.delete(name);
+            });
+        }
+        
+        // Redirect to login
+        window.location.href = "' . BACKEND_URL . 'login/login.php";
+    </script>';
+    
+    // PHP redirect as fallback
     header('Location: ' . BACKEND_URL . 'login/login.php');
     exit();
 }

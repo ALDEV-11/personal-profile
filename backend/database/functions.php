@@ -306,8 +306,8 @@ function createProject($data) {
     
     try {
         $sql = "INSERT INTO projects (project_title, description, image, project_url, github_url, 
-                technologies, start_date, end_date, is_featured, display_order) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                technologies, is_featured, display_order) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         
         $stmt = $pdo->prepare($sql);
         return $stmt->execute([
@@ -317,12 +317,11 @@ function createProject($data) {
             $data['project_url'] ?? null,
             $data['github_url'] ?? null,
             $data['technologies'] ?? null,
-            $data['start_date'] ?? null,
-            $data['end_date'] ?? null,
             $data['is_featured'] ?? 0,
             $data['display_order'] ?? 0
         ]);
     } catch (PDOException $e) {
+        error_log("Error creating project: " . $e->getMessage());
         return false;
     }
 }
@@ -340,8 +339,6 @@ function updateProject($id, $data) {
                 project_url = ?,
                 github_url = ?,
                 technologies = ?,
-                start_date = ?,
-                end_date = ?,
                 is_featured = ?,
                 display_order = ?";
         
@@ -351,8 +348,6 @@ function updateProject($id, $data) {
             $data['project_url'] ?? null,
             $data['github_url'] ?? null,
             $data['technologies'] ?? null,
-            $data['start_date'] ?? null,
-            $data['end_date'] ?? null,
             $data['is_featured'] ?? 0,
             $data['display_order'] ?? 0
         ];
@@ -369,6 +364,7 @@ function updateProject($id, $data) {
         $stmt = $pdo->prepare($sql);
         return $stmt->execute($params);
     } catch (PDOException $e) {
+        error_log("Error updating project: " . $e->getMessage());
         return false;
     }
 }

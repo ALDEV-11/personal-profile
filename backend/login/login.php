@@ -11,6 +11,14 @@ require_once '../database/functions.php';
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
+header("Expires: Mon, 01 Jan 1990 00:00:00 GMT");
+
+// Clear any logged_out session flag
+if (isset($_SESSION['logged_out']) && $_SESSION['logged_out'] === true) {
+    session_unset();
+    session_destroy();
+    session_start();
+}
 
 // Jika sudah login, redirect ke dashboard
 if (isLoggedIn()) {

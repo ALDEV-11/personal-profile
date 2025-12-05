@@ -290,12 +290,6 @@ include '../partials/sidebar.php';
                         </div>
                         <small class="text-muted">Example: fab fa-facebook, fab fa-twitter, fab fa-github</small>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label for="add_display_order" class="form-label">Display Order</label>
-                        <input type="number" class="form-control" id="add_display_order" name="display_order" value="0" min="0">
-                        <small class="text-muted">Lower numbers appear first</small>
-                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
@@ -357,12 +351,6 @@ include '../partials/sidebar.php';
                         </div>
                         <small class="text-muted">Example: fab fa-facebook, fab fa-twitter, fab fa-github</small>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label for="edit_display_order" class="form-label">Display Order</label>
-                        <input type="number" class="form-control" id="edit_display_order" name="display_order" value="0" min="0">
-                        <small class="text-muted">Lower numbers appear first</small>
-                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
@@ -415,7 +403,6 @@ function editSocialMedia(id) {
                 document.getElementById('edit_platform').value = social.platform;
                 document.getElementById('edit_url').value = social.url;
                 document.getElementById('edit_icon').value = social.icon;
-                document.getElementById('edit_display_order').value = social.display_order;
                 document.getElementById('edit_icon_preview').className = social.icon;
                 
                 // Show modal

@@ -323,11 +323,6 @@ include '../partials/sidebar.php';
                             <a href="https://fontawesome.com/icons" target="_blank">Browse icons</a>
                         </small>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label for="add_display_order" class="form-label">Display Order</label>
-                        <input type="number" class="form-control" id="add_display_order" name="display_order" value="0">
-                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
@@ -391,11 +386,6 @@ include '../partials/sidebar.php';
                             <a href="https://fontawesome.com/icons" target="_blank">Browse icons</a>
                         </small>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label for="edit_display_order" class="form-label">Display Order</label>
-                        <input type="number" class="form-control" id="edit_display_order" name="display_order" value="0">
-                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
@@ -432,7 +422,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.getElementById('edit_category').value = skill.category;
                         document.getElementById('edit_skill_level').value = skill.skill_level;
                         document.getElementById('edit_icon').value = skill.icon || '';
-                        document.getElementById('edit_display_order').value = skill.display_order;
                     } else {
                         alert('Error: ' + data.message);
                     }

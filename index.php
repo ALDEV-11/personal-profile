@@ -421,7 +421,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
                     if ($flash): 
                     ?>
                         <div class="alert alert-<?php echo $flash['type'] === 'success' ? 'success' : 'error'; ?>" id="flashAlert">
-                            <i class="fas fa-<?php echo $flash['type'] === 'success' ? 'check' : 'times'; ?>-circle me-2"></i> 
                             <?php echo htmlspecialchars($flash['message']); ?>
                         </div>
                     <?php endif; ?>
@@ -477,7 +476,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
                 setTimeout(function() {
                     flashAlert.remove();
                 }, 500);
-            }, 5000);
+            }, 3000); // 3 detik
         }
         
         // Setelah notifikasi hilang, clear hash jika ada

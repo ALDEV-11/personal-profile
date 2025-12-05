@@ -14,6 +14,10 @@ $pageTitle = 'Projects Management';
 // Search functionality
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 
+// Sorting functionality
+$sort = isset($_GET['sort']) && in_array($_GET['sort'], ['asc', 'desc']) ? $_GET['sort'] : 'asc';
+$orderBy = $sort === 'asc' ? 'ASC' : 'DESC';
+
 // Pagination settings
 $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 5;
 if ($limit <= 0 || $limit > 100) $limit = 5; // Validation
@@ -43,7 +47,7 @@ $totalRecords = $countStmt->fetchColumn();
 $totalPages = ceil($totalRecords / $limit);
 
 // Get paginated projects
-$query = "SELECT * FROM projects $whereClause ORDER BY display_order ASC, created_at DESC LIMIT :limit OFFSET :offset";
+$query = "SELECT * FROM projects $whereClause ORDER BY display_order $orderBy, created_at DESC LIMIT :limit OFFSET :offset";
 $stmt = $pdo->prepare($query);
 foreach ($params as $key => $value) {
     $stmt->bindValue($key, $value);
@@ -81,6 +85,41 @@ include '../partials/sidebar.php';
         </div>
     <?php endif; ?>
     
+    <!-- Projects Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="fas fa-folder-open fa-2x text-primary mb-3"></i>
+                    <h3 class="mb-1"><?php echo $totalRecords; ?></h3>
+                    <p class="text-muted mb-0">Total Projects</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="fas fa-star fa-2x text-warning mb-3"></i>
+                    <h3 class="mb-1">
+                        <?php echo count(array_filter($projects, function($p) { return $p['is_featured']; })); ?>
+                    </h3>
+                    <p class="text-muted mb-0">Featured Projects</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="fab fa-github fa-2x text-dark mb-3"></i>
+                    <h3 class="mb-1">
+                        <?php echo count(array_filter($projects, function($p) { return !empty($p['github_url']); })); ?>
+                    </h3>
+                    <p class="text-muted mb-0">With GitHub</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- Projects Datatable -->
     <div class="card">
         <div class="card-header">
@@ -94,7 +133,7 @@ include '../partials/sidebar.php';
                 <div class="col-sm-12 col-md-6">
                     <div class="d-flex align-items-center">
                         <label class="me-2 mb-0">Show</label>
-                        <select name="limit" class="form-select form-select-sm" style="width: 80px;" onchange="window.location.href='?limit=' + this.value + '<?php echo !empty($search) ? '&search=' . urlencode($search) : ''; ?>'">
+                        <select name="limit" class="form-select form-select-sm" style="width: 80px;" onchange="window.location.href='?limit=' + this.value + '<?php echo !empty($search) ? '&search=' . urlencode($search) : ''; ?><?php echo isset($_GET['sort']) ? '&sort=' . htmlspecialchars($_GET['sort']) : ''; ?>'">
                             <option value="5" <?php echo $limit == 5 ? 'selected' : ''; ?>>5</option>
                             <option value="10" <?php echo $limit == 10 ? 'selected' : ''; ?>>10</option>
                             <option value="25" <?php echo $limit == 25 ? 'selected' : ''; ?>>25</option>
@@ -107,6 +146,9 @@ include '../partials/sidebar.php';
                     <form method="GET" action="" class="d-flex justify-content-md-end mt-2 mt-md-0">
                         <?php if (!empty($_GET['limit'])): ?>
                             <input type="hidden" name="limit" value="<?php echo (int)$_GET['limit']; ?>">
+                        <?php endif; ?>
+                        <?php if (!empty($_GET['sort'])): ?>
+                            <input type="hidden" name="sort" value="<?php echo htmlspecialchars($_GET['sort']); ?>">
                         <?php endif; ?>
                         <div class="position-relative" style="max-width: 300px; width: 100%;">
                             <input type="text" 
@@ -251,6 +293,7 @@ include '../partials/sidebar.php';
                 $queryParams = [];
                 if (!empty($search)) $queryParams[] = 'search=' . urlencode($search);
                 if (isset($_GET['limit'])) $queryParams[] = 'limit=' . (int)$_GET['limit'];
+                if (isset($_GET['sort'])) $queryParams[] = 'sort=' . htmlspecialchars($_GET['sort']);
                 $queryString = !empty($queryParams) ? '&' . implode('&', $queryParams) : '';
                 ?>
                 <div class="row mt-3">
@@ -307,41 +350,6 @@ include '../partials/sidebar.php';
                 </div>
                 <?php endif; ?>
             <?php endif; ?>
-        </div>
-    </div>
-    
-    <!-- Projects Statistics -->
-    <div class="row mt-4">
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body text-center">
-                    <i class="fas fa-folder-open fa-2x text-primary mb-3"></i>
-                    <h3 class="mb-1"><?php echo $totalRecords; ?></h3>
-                    <p class="text-muted mb-0">Total Projects</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body text-center">
-                    <i class="fas fa-star fa-2x text-warning mb-3"></i>
-                    <h3 class="mb-1">
-                        <?php echo count(array_filter($projects, function($p) { return $p['is_featured']; })); ?>
-                    </h3>
-                    <p class="text-muted mb-0">Featured Projects</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body text-center">
-                    <i class="fab fa-github fa-2x text-dark mb-3"></i>
-                    <h3 class="mb-1">
-                        <?php echo count(array_filter($projects, function($p) { return !empty($p['github_url']); })); ?>
-                    </h3>
-                    <p class="text-muted mb-0">With GitHub</p>
-                </div>
-            </div>
         </div>
     </div>
 </div>

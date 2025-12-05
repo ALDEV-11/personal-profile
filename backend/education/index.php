@@ -289,12 +289,6 @@ include '../partials/sidebar.php';
                             <label for="add_description" class="form-label">Description</label>
                             <textarea class="form-control" id="add_description" name="description" rows="4" placeholder="Activities, achievements, GPA, etc..."></textarea>
                         </div>
-                        
-                        <div class="col-md-12 mb-3">
-                            <label for="add_display_order" class="form-label">Display Order</label>
-                            <input type="number" class="form-control" id="add_display_order" name="display_order" value="0" min="0">
-                            <small class="text-muted">Lower numbers appear first</small>
-                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -353,12 +347,6 @@ include '../partials/sidebar.php';
                         <div class="col-md-12 mb-3">
                             <label for="edit_description" class="form-label">Description</label>
                             <textarea class="form-control" id="edit_description" name="description" rows="4"></textarea>
-                        </div>
-                        
-                        <div class="col-md-12 mb-3">
-                            <label for="edit_display_order" class="form-label">Display Order</label>
-                            <input type="number" class="form-control" id="edit_display_order" name="display_order" min="0">
-                            <small class="text-muted">Lower numbers appear first</small>
                         </div>
                     </div>
                 </div>
@@ -433,7 +421,6 @@ async function editEducation(id) {
             document.getElementById('edit_start_date').value = education.start_date;
             document.getElementById('edit_end_date').value = education.end_date || '';
             document.getElementById('edit_description').value = education.description || '';
-            document.getElementById('edit_display_order').value = education.display_order;
             
             const editModal = new bootstrap.Modal(document.getElementById('editEducationModal'));
             editModal.show();

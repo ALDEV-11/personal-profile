@@ -30,10 +30,14 @@ if ($id <= 0) {
 
 // Mark as read
 if (markMessageAsRead($id)) {
+    // Get updated unread count
+    $unreadCount = getUnreadMessagesCount();
+    
     echo json_encode([
         'success' => true, 
         'message' => 'Pesan ditandai sebagai sudah dibaca',
-        'id' => $id
+        'id' => $id,
+        'unreadCount' => $unreadCount
     ]);
 } else {
     echo json_encode(['success' => false, 'message' => 'Gagal menandai pesan']);

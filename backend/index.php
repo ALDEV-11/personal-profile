@@ -194,6 +194,19 @@ include 'partials/sidebar.php';
 </style>
 
 <script>
+// Function untuk update notification badge di navbar
+function updateNotificationBadge(count) {
+    const navBadge = document.querySelector('.notification-badge');
+    if (navBadge) {
+        if (count > 0) {
+            navBadge.textContent = count > 99 ? '99+' : count;
+            navBadge.style.display = '';
+        } else {
+            navBadge.style.display = 'none';
+        }
+    }
+}
+
 // View Message Function
 async function viewMessage(id) {
     const modal = new bootstrap.Modal(document.getElementById('viewMessageModal'));
@@ -272,7 +285,15 @@ async function viewMessage(id) {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
                     body: 'id=' + id
-                });
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.unreadCount !== undefined) {
+                        // Update notification badge di navbar
+                        updateNotificationBadge(data.unreadCount);
+                    }
+                })
+                .catch(error => console.error('Error marking as read:', error));
             }
         } else {
             contentDiv.innerHTML = `
